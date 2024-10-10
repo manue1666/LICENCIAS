@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { licencias_backend } from 'declarations/licencias_backend';
-
+import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 function App() {
   const [greeting, setGreeting] = useState('');
 
@@ -15,15 +16,26 @@ function App() {
 
   return (
     <main>
-      <img src="/logo2.svg" alt="DFINITY logo" />
-      <br />
-      <br />
-      <form action="#" onSubmit={handleSubmit}>
-        <label htmlFor="name">Enter your name: &nbsp;</label>
-        <input id="name" alt="Name" type="text" />
-        <button type="submit">Click Me!</button>
-      </form>
-      <section id="greeting">{greeting}</section>
+      <Container>
+        <Navbar>
+          <Container>
+            <Navbar.Brand>CertiBlock</Navbar.Brand>
+            <Navbar.Toggle></Navbar.Toggle>
+            <Navbar.Collapse>
+              <Nav>
+                <Nav.Link>Home</Nav.Link>
+                <Nav.Link>Tramite</Nav.Link>
+                <NavDropdown>
+                <NavDropdown.Item>Consultas</NavDropdown.Item>
+                <NavDropdown.Item>Solicitar y Realizar</NavDropdown.Item>
+
+                
+                </NavDropdown>
+              </Nav>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
+      </Container>
     </main>
   );
 }

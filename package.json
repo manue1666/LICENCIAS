@@ -15,5 +15,8 @@
   "workspaces": [
     "src/licencias_backend",
     "src/licencias_frontend"
-  ]
+  ],
+  "dependencies": {
+    "react-bootstrap": "^2.10.5"
+  }
 }
