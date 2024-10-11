@@ -35,7 +35,7 @@ export default function App() {
               </FormGroup>
             </Form>
             <center>
-              <Button className='d-flex justify-content-between, mt-3'>Iniciar sesion</Button>
+              <Button href='/Login' className='d-flex justify-content-between, mt-3'>Iniciar sesion</Button>
               <Button className='mt-1'>Registrarse</Button>
             </center>
           </Card.Body>
