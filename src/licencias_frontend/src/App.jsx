@@ -2,8 +2,7 @@
 import { licencias_backend } from 'declarations/licencias_backend';
 import { Container, Nav, Navbar, NavDropdown,Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-
+import Log from '../src/Log.png';
 export default function App() {
 
   return (
@@ -11,6 +10,7 @@ export default function App() {
       <Container>
         <Navbar>
           <Container>
+          <img width="100" height="50" src={Log} alt="Log"/>
             <Navbar.Brand>CertiBlock</Navbar.Brand>
             <Navbar.Toggle></Navbar.Toggle>
             <Navbar.Collapse>
