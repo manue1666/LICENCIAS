@@ -17,6 +17,7 @@
     "src/licencias_frontend"
   ],
   "dependencies": {
-    "react-bootstrap": "^2.10.5"
+    "react-bootstrap": "^2.10.5",
+    "react-router-dom": "^6.26.2"
   }
 }

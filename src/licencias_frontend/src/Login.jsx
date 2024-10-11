@@ -1,10 +1,9 @@
 
 import { licencias_backend } from 'declarations/licencias_backend';
 import { Container, Nav, Navbar, NavDropdown,Button } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-export default function App() {
+export default function Login() {
 
   return (
     <main>
@@ -24,10 +23,9 @@ export default function App() {
           </Container>
         </Navbar>
         <h1>aki ba el formulario de inicio de sesion</h1>
-        <Button>iniciar sesion</Button>
+        <Button >iniciar sesion</Button>
         <Button>registrarse</Button>
       </Container>
     </main>
   );
 }
-
