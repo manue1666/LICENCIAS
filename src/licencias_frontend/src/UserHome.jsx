@@ -7,7 +7,7 @@ import Log from '../src/Log.png';
 export default function UserHome() {
 
   return (
-    <Container>
+    <Container className='mt-3' >
       <Card>
         <Card.Body>
         <Navbar>
@@ -18,9 +18,10 @@ export default function UserHome() {
           <Navbar.Collapse>
             <Nav>
               <Nav.Link></Nav.Link>
-              <NavDropdown>
+              <NavDropdown title="Menu">
               <NavDropdown.Item>Consultar</NavDropdown.Item>
               <NavDropdown.Item>Solicitar</NavDropdown.Item>
+              <NavDropdown.Item href='/'>Log out</NavDropdown.Item>
               </NavDropdown>
             </Nav>
           </Navbar.Collapse>

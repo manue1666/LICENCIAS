@@ -6,6 +6,7 @@ import {
 import App from './App';
 import './index.scss';
 import UserHome from './UserHome';
+import AdminHome from './AdminHome';
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ const router = createBrowserRouter([
   {
     path:"/UserHome",
     element: <UserHome/>,
+  },
+  {
+    path:"/AdminHome",
+    element: <AdminHome/>,
   },
 ]);
 
