@@ -2,21 +2,45 @@ import { Container, Nav, Navbar, Button, Card, Form, FormControl, FormLabel, For
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Log from '../src/Log.png';
 import { useState } from 'react';
+import UserHome from './UserHome';
 
 const users = [
-  { email: 'admin@example.com', password: 'admin123', role: 'admin' },
-  { email: 'user@example.com', password: 'user123', role: 'user' }
+  { id: 1, name: 'Admin', surname: 'User', licenseNumber: '0000', email: 'admin@example.com', password: 'admin123', role: 'admin' },
+  { id: 2, name: 'Regular', surname: 'User', licenseNumber: '1111', email: 'user@example.com', password: 'user123', role: 'user' }
 ];
+
+window.users = users;  // Exponer el arreglo users en el objeto window
 
 export default function App() {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [surname, setSurname] = useState('');
+  const [licenseNumber, setLicenseNumber] = useState('');
+
   const handleCloseLogin = () => setShowLogin(false);
   const handleShowLogin = () => setShowLogin(true);
   const handleCloseRegister = () => setShowRegister(false);
   const handleShowRegister = () => setShowRegister(true);
+
+  const handleRegister = () => {
+    const newUser = {
+      id: users.length + 1,
+      name,
+      surname,
+      licenseNumber,
+      email,
+      password,
+      role: 'user'
+    };
+    users.push(newUser);
+    console.log('Usuario registrado:', newUser); // Esto imprimirá el nuevo usuario en la consola
+    alert('Registro exitoso. Ahora puedes iniciar sesión.');
+    setShowRegister(false);
+  };
+  
 
   const handleLogin = () => {
     const user = users.find(u => u.email === email && u.password === password);
@@ -51,7 +75,6 @@ export default function App() {
           </Card.Body>
         </Card>
       </Container>
-
       <Container className="mt-5">
         <Card style={{ width: '18rem' }}>
           <Card.Body>
@@ -61,7 +84,6 @@ export default function App() {
           </Card.Body>
         </Card>
       </Container>
-
       <Container className="mt-5">
         <Card style={{ width: '18rem' }}>
           <Card.Body>
@@ -71,7 +93,6 @@ export default function App() {
           </Card.Body>
         </Card>
       </Container>
-
       <Modal show={showLogin} onHide={handleCloseLogin} backdrop="static" keyboard={false}>
         <Modal.Header closeButton>
           <Modal.Title>Iniciar sesión</Modal.Title>
@@ -81,14 +102,14 @@ export default function App() {
             <Form>
               <FormGroup>
                 <FormLabel>Correo electrónico</FormLabel>
-                <FormControl 
+                <FormControl
                   placeholder='Ingresar correo'
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <FormLabel>Contraseña</FormLabel>
-                <FormControl 
-                  placeholder='Ingresar contraseña' 
+                <FormControl
+                  placeholder='Ingresar contraseña'
                   type='password'
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -106,7 +127,6 @@ export default function App() {
           </Button>
         </Modal.Footer>
       </Modal>
-      
       <Modal show={showRegister} onHide={handleCloseRegister} backdrop="static" keyboard={false}>
         <Modal.Header closeButton>
           <Modal.Title>Registrarse</Modal.Title>
@@ -116,13 +136,36 @@ export default function App() {
             <Form>
               <FormGroup>
                 <FormLabel>Nombre</FormLabel>
-                <FormControl placeholder='Ingresar nombre'></FormControl>
+                <FormControl
+                  placeholder='Ingresar nombre'
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
                 <FormLabel>Apellido</FormLabel>
-                <FormControl placeholder='Ingresar apellidos'></FormControl>
+                <FormControl
+                  placeholder='Ingresar apellidos'
+                  value={surname}
+                  onChange={(e) => setSurname(e.target.value)}
+                />
                 <FormLabel>Correo electrónico</FormLabel>
-                <FormControl placeholder='Ingresar correo'></FormControl>
+                <FormControl
+                  placeholder='Ingresar correo'
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
                 <FormLabel>Contraseña</FormLabel>
-                <FormControl placeholder='Ingresar contraseña' type='password'></FormControl>
+                <FormControl
+                  placeholder='Ingresar contraseña'
+                  type='password'
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <FormLabel>Numero de licencia</FormLabel>
+                <FormControl
+                  placeholder='Ingresar numero de licencia'
+                  value={licenseNumber}
+                  onChange={(e) => setLicenseNumber(e.target.value)}
+                />
               </FormGroup>
             </Form>
           </Container>
@@ -131,7 +174,7 @@ export default function App() {
           <Button variant="secondary" onClick={handleCloseRegister}>
             Cerrar
           </Button>
-          <Button variant="primary" href='/UserHome'>
+          <Button variant="primary" onClick={handleRegister}>
             Registrarse
           </Button>
         </Modal.Footer>
@@ -139,5 +182,3 @@ export default function App() {
     </main>
   );
 }
-
-
