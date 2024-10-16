@@ -1,10 +1,12 @@
 import { Container, Nav, Navbar, Button, Card, Form, FormControl, FormLabel, FormGroup, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Log from '../src/Log.png';
-import { useState } from 'react';
-import UserHome from './UserHome';
+import Log from '/root/licencias/src/licencias_frontend/src/Log.png';
+import { LoginForm } from './Login';
+import { RegistForm } from './Regist';
 
-const users = [
+
+
+export const users = [
   { id: 1, name: 'Admin', surname: 'User', licenseNumber: '0000', email: 'admin@example.com', password: 'admin123', role: 'admin' },
   { id: 2, name: 'Regular', surname: 'User', licenseNumber: '1111', email: 'user@example.com', password: 'user123', role: 'user' }
 ];
@@ -12,48 +14,7 @@ const users = [
 window.users = users;  // Exponer el arreglo users en el objeto window
 
 export default function App() {
-  const [showLogin, setShowLogin] = useState(false);
-  const [showRegister, setShowRegister] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [surname, setSurname] = useState('');
-  const [licenseNumber, setLicenseNumber] = useState('');
 
-  const handleCloseLogin = () => setShowLogin(false);
-  const handleShowLogin = () => setShowLogin(true);
-  const handleCloseRegister = () => setShowRegister(false);
-  const handleShowRegister = () => setShowRegister(true);
-
-  const handleRegister = () => {
-    const newUser = {
-      id: users.length + 1,
-      name,
-      surname,
-      licenseNumber,
-      email,
-      password,
-      role: 'user'
-    };
-    users.push(newUser);
-    console.log('Usuario registrado:', newUser); // Esto imprimirá el nuevo usuario en la consola
-    alert('Registro exitoso. Ahora puedes iniciar sesión.');
-    setShowRegister(false);
-  };
-  
-
-  const handleLogin = () => {
-    const user = users.find(u => u.email === email && u.password === password);
-    if (user) {
-      if (user.role === 'admin') {
-        window.location.href = '/AdminHome';
-      } else if (user.role === 'user') {
-        window.location.href = '/UserHome';
-      }
-    } else {
-      alert('Credenciales incorrectas');
-    }
-  };
 
   return (
     <main>
@@ -75,110 +36,13 @@ export default function App() {
           </Card.Body>
         </Card>
       </Container>
-      <Container className="mt-5">
-        <Card style={{ width: '18rem' }}>
-          <Card.Body>
-            <Card.Title>Login</Card.Title>
-            <Card.Text>Inicia sesión para tramitar tu licencia digital en blockchain</Card.Text>
-            <Button variant="primary" onClick={handleShowLogin}>Iniciar sesión</Button>
-          </Card.Body>
-        </Card>
+      <Container>
+        <LoginForm/>
       </Container>
-      <Container className="mt-5">
-        <Card style={{ width: '18rem' }}>
-          <Card.Body>
-            <Card.Title>Registrarse</Card.Title>
-            <Card.Text>Crea una cuenta y tramita tu licencia digital en blockchain</Card.Text>
-            <Button variant="primary" onClick={handleShowRegister}>Registrarse</Button>
-          </Card.Body>
-        </Card>
+      <Container>
+        <RegistForm/>
       </Container>
-      <Modal show={showLogin} onHide={handleCloseLogin} backdrop="static" keyboard={false}>
-        <Modal.Header closeButton>
-          <Modal.Title>Iniciar sesión</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Container style={{ width: '60%' }}>
-            <Form>
-              <FormGroup>
-                <FormLabel>Correo electrónico</FormLabel>
-                <FormControl
-                  placeholder='Ingresar correo'
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <FormLabel>Contraseña</FormLabel>
-                <FormControl
-                  placeholder='Ingresar contraseña'
-                  type='password'
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </FormGroup>
-            </Form>
-          </Container>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseLogin}>
-            Cerrar
-          </Button>
-          <Button variant="primary" onClick={handleLogin}>
-            Iniciar sesión
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      <Modal show={showRegister} onHide={handleCloseRegister} backdrop="static" keyboard={false}>
-        <Modal.Header closeButton>
-          <Modal.Title>Registrarse</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Container style={{ width: '60%' }}>
-            <Form>
-              <FormGroup>
-                <FormLabel>Nombre</FormLabel>
-                <FormControl
-                  placeholder='Ingresar nombre'
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <FormLabel>Apellido</FormLabel>
-                <FormControl
-                  placeholder='Ingresar apellidos'
-                  value={surname}
-                  onChange={(e) => setSurname(e.target.value)}
-                />
-                <FormLabel>Correo electrónico</FormLabel>
-                <FormControl
-                  placeholder='Ingresar correo'
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <FormLabel>Contraseña</FormLabel>
-                <FormControl
-                  placeholder='Ingresar contraseña'
-                  type='password'
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <FormLabel>Numero de licencia</FormLabel>
-                <FormControl
-                  placeholder='Ingresar numero de licencia'
-                  value={licenseNumber}
-                  onChange={(e) => setLicenseNumber(e.target.value)}
-                />
-              </FormGroup>
-            </Form>
-          </Container>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseRegister}>
-            Cerrar
-          </Button>
-          <Button variant="primary" onClick={handleRegister}>
-            Registrarse
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      
     </main>
   );
 }
