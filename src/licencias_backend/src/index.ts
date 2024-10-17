@@ -5,23 +5,32 @@ import cors from 'cors';
 // Contador para asignar IDs únicos a los usuarios
 let userIdCounter = 1;
 
-
-// Estructura de usuario
+// Estructura de usuario con los datos de los documentos y licencia
 let users: Array<{
     id: number;
     name: string;
     surname: string;
-    licenseNumber: string;
     email: string;
     password: string;
     role: string;
+    documentData?: { 
+        identification: string;
+        addressProof: string;
+        educationCertificate: string;
+        practicalExamCertificate: string;
+        curp: string;
+    };
+    licenseData?: {  // Nueva propiedad para almacenar datos de licencia
+        licenseNumber: string;
+        expirationDate: string;
+        licenseType: string;
+    };
 }> = [];
 
 const adminUser = {
     id: userIdCounter++,
     name: 'Admin',
     surname: 'User',
-    licenseNumber: '1234-5678',
     email: 'admin@example.com',
     password: '12345', // Cambia esto por una contraseña segura
     role: 'admin',
@@ -38,13 +47,12 @@ export default Server(() => {
 
     // Ruta para registrar usuarios
     app.post('/register', (req, res) => {
-        const { name, surname, licenseNumber, email, password } = req.body;
+        const { name, surname, email, password } = req.body;
 
         const newUser = {
             id: userIdCounter++,
             name,
             surname,
-            licenseNumber,
             email,
             password,
             role: 'user', // Asignar un rol por defecto
@@ -80,6 +88,59 @@ export default Server(() => {
         }
 
         res.json(user);
+    });
+
+    // Ruta para actualizar los datos de los documentos del usuario
+    app.put('/user/:id/documents', (req, res) => {
+        const userId = Number(req.params.id);
+        const { identification, addressProof, educationCertificate, practicalExamCertificate, curp } = req.body;
+
+        const user = users.find(u => u.id === userId);
+        if (!user) {
+            return res.status(404).send('Usuario no encontrado');
+        }
+
+        // Guardar los datos de los documentos
+        user.documentData = {
+            identification,
+            addressProof,
+            educationCertificate,
+            practicalExamCertificate,
+            curp
+        };
+
+        console.log(`Documentos actualizados para el usuario ${userId}:`, user.documentData);
+        res.status(200).send('Documentos actualizados exitosamente.');
+    });
+
+    // Ruta para generar una licencia para un usuario
+    app.post('/user/:id/generate-license', (req, res) => {
+        const userId = Number(req.params.id);
+        const { licenseType } = req.body;
+
+        const user = users.find(u => u.id === userId);
+        if (!user) {
+            return res.status(404).send('Usuario no encontrado');
+        }
+
+        const licenseNumber = `LIC-${userIdCounter++}`; // Generar un número de licencia único
+        const expirationDate = new Date();
+        expirationDate.setFullYear(expirationDate.getFullYear() + 1); // La licencia expira en 1 año
+
+        user.licenseData = {
+            licenseNumber,
+            expirationDate: expirationDate.toISOString().split('T')[0], // Formato YYYY-MM-DD
+            licenseType,
+        };
+
+        console.log(`Licencia generada para el usuario ${userId}:`, user.licenseData);
+        res.status(200).send('Licencia generada exitosamente.');
+    });
+
+    // Ruta para obtener solo usuarios con datos completos
+    app.get('/users', (req, res) => {
+        const completeUsers = users.filter(user => user.documentData); // Filtra usuarios con documentData definido
+        res.json(completeUsers); // Devuelve solo la lista de usuarios completos
     });
 
     // Iniciar el servidor

@@ -3,6 +3,7 @@ import { Container, Nav, Navbar, NavDropdown, Card, Tab, Tabs } from 'react-boot
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Log from '../src/Log.png';
 import { FormTram } from './UserOptions';
+import { UserGestion } from './UserGest';
 
 export default function UserHome() {
   const [userData, setUserData] = useState(null); // Estado para almacenar datos del usuario
@@ -76,10 +77,11 @@ export default function UserHome() {
               className="mb-3"
               fill
             >
-              <Tab eventKey="consultar" title="consultar">
+              <Tab eventKey="consultar" title="Consultar">
                 Aquí aparecerá la licencia digital del usuario, así como las multas vinculadas a esta o si requiere renovación.
+                <UserGestion userData={userData} /> {/* Pasar userData como props */}
               </Tab>
-              <Tab eventKey="tramitar" title="tramitar">
+              <Tab eventKey="tramitar" title="Tramitar">
                 <Container>
                   <FormTram />
                 </Container>

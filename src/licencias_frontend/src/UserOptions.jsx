@@ -1,37 +1,96 @@
 import React, { useState } from 'react';
-import { Button, Card, Container, Modal, Form, FormGroup, FormLabel, FormControl } from 'react-bootstrap';
+import { Button, Card, Container, Modal, Form, FormGroup, FormLabel, FormControl, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export const FormTram = ({}) => {
+export const FormTram = () => {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     nombre: '',
-    apellido: '',
-    email: '',
-    password: '',
-    identificacion: null,
-    comprobanteDomicilio: null,
+    identification: '',
+    addressProof: '',
+    educationCertificate: '',
+    practicalExamCertificate: '',
+    curp: ''
   });
 
-  const handleCloseForm = () => setShowForm(false);
-  const handleShowForm = () => setShowForm(true);
+  const [errors, setErrors] = useState({});
+
+  // Validación para cada campo
+  const validateIdentification = (idNumber) => /^[A-Z0-9]{8,12}$/.test(idNumber);
+  const validateAddressProof = (postalCode) => /^\d{5}$/.test(postalCode); // Solo valida que el código postal sea de 5 dígitos
+  const validateEducationCertificate = (certificateNumber) => /^[A-Z0-9]{6,10}$/.test(certificateNumber);
+  const validatePracticalExamCertificate = (examNumber) => /^[A-Z0-9]{6,10}$/.test(examNumber);
+  const validateCURP = (curp) => /^[A-Z]{4}\d{6}[HM][A-Z]{5}[A-Z0-9]{2}$/.test(curp);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({ ...prevState, [name]: value }));
-  };
-
-  const handleFileChange = (e) => {
-    const { name, files } = e.target;
-    setFormData(prevState => ({ ...prevState, [name]: files[0] }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Datos del formulario:', formData);
-    // Aquí puedes agregar la lógica para enviar los datos al backend
-    handleCloseForm();
+    const validationErrors = {};
+
+    if (!validateIdentification(formData.identification)) {
+      validationErrors.identification = "Identificación no válida (debe ser alfanumérica entre 8 y 12 caracteres)";
+    }
+    if (!validateAddressProof(formData.addressProof)) {
+      validationErrors.addressProof = "Código postal no válido (debe ser de 5 dígitos)";
+    }
+    if (!validateEducationCertificate(formData.educationCertificate)) {
+      validationErrors.educationCertificate = "Folio del curso de educación vial no válido";
+    }
+    if (!validatePracticalExamCertificate(formData.practicalExamCertificate)) {
+      validationErrors.practicalExamCertificate = "Folio del examen práctico no válido";
+    }
+    if (!validateCURP(formData.curp)) {
+      validationErrors.curp = "CURP no válida";
+    }
+
+    setErrors(validationErrors);
+
+    // Si no hay errores, enviar los datos al backend
+    if (Object.keys(validationErrors).length === 0) {
+      console.log('Formulario válido, enviar datos:', formData);
+
+      // Obtener el ID del usuario desde el localStorage
+      const storedUser = localStorage.getItem('user');
+      if (!storedUser) {
+        alert('No se ha iniciado sesión');
+        return;
+      }
+
+      const { id } = JSON.parse(storedUser);
+
+      // Enviar los datos de los documentos al backend
+      fetch(`http://bd3sg-teaaa-aaaaa-qaaba-cai.localhost:4943/user/${id}/documents`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          identification: formData.identification,
+          addressProof: formData.addressProof,
+          educationCertificate: formData.educationCertificate,
+          practicalExamCertificate: formData.practicalExamCertificate,
+          curp: formData.curp
+        })
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error al enviar los documentos');
+          }
+          alert('Documentos enviados correctamente');
+          handleCloseForm();
+        })
+        .catch(error => {
+          console.error('Error al enviar los documentos:', error);
+          alert('Hubo un problema al enviar los documentos');
+        });
+    }
   };
+
+  const handleShowForm = () => setShowForm(true);
+  const handleCloseForm = () => setShowForm(false);
 
   return (
     <>
@@ -62,50 +121,76 @@ export const FormTram = ({}) => {
                   value={formData.nombre}
                   onChange={handleChange}
                 />
-                <FormLabel>Apellido</FormLabel>
-                <FormControl
-                  placeholder='Ingresar apellidos'
-                  name='apellido'
-                  value={formData.apellido}
-                  onChange={handleChange}
-                />
-                <FormLabel>Correo electrónico</FormLabel>
-                <FormControl
-                  placeholder='Ingresar correo'
-                  name='email'
-                  type='email'
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-                <FormLabel>Contraseña</FormLabel>
-                <FormControl
-                  placeholder='Ingresar contraseña'
-                  name='password'
-                  type='password'
-                  value={formData.password}
-                  onChange={handleChange}
-                />
+              </FormGroup>
+
+              <FormGroup>
                 <FormLabel>Identificación Oficial</FormLabel>
                 <FormControl
-                  type='file'
-                  name='identificacion'
-                  onChange={handleFileChange}
+                  placeholder='Número de identificación'
+                  name='identification'
+                  value={formData.identification}
+                  onChange={handleChange}
+                  isInvalid={!!errors.identification}
                 />
-                <FormLabel>Comprobante de Domicilio</FormLabel>
-                <FormControl
-                  type='file'
-                  name='comprobanteDomicilio'
-                  onChange={handleFileChange}
-                />
+                {errors.identification && <Alert variant='danger'>{errors.identification}</Alert>}
               </FormGroup>
+
+              <FormGroup>
+                <FormLabel>Comprobante de Domicilio (Código Postal)</FormLabel>
+                <FormControl
+                  placeholder='Código postal'
+                  name='addressProof'
+                  value={formData.addressProof}
+                  onChange={handleChange}
+                  isInvalid={!!errors.addressProof}
+                />
+                {errors.addressProof && <Alert variant='danger'>{errors.addressProof}</Alert>}
+              </FormGroup>
+
+              <FormGroup>
+                <FormLabel>Constancia de Estudios del Curso de Educación Vial</FormLabel>
+                <FormControl
+                  placeholder='Folio del curso'
+                  name='educationCertificate'
+                  value={formData.educationCertificate}
+                  onChange={handleChange}
+                  isInvalid={!!errors.educationCertificate}
+                />
+                {errors.educationCertificate && <Alert variant='danger'>{errors.educationCertificate}</Alert>}
+              </FormGroup>
+
+              <FormGroup>
+                <FormLabel>Constancia del Examen Práctico</FormLabel>
+                <FormControl
+                  placeholder='Folio del examen'
+                  name='practicalExamCertificate'
+                  value={formData.practicalExamCertificate}
+                  onChange={handleChange}
+                  isInvalid={!!errors.practicalExamCertificate}
+                />
+                {errors.practicalExamCertificate && <Alert variant='danger'>{errors.practicalExamCertificate}</Alert>}
+              </FormGroup>
+
+              <FormGroup>
+                <FormLabel>CURP</FormLabel>
+                <FormControl
+                  placeholder='CURP'
+                  name='curp'
+                  value={formData.curp}
+                  onChange={handleChange}
+                  isInvalid={!!errors.curp}
+                />
+                {errors.curp && <Alert variant='danger'>{errors.curp}</Alert>}
+              </FormGroup>
+
+              <Button className='mb-3, mt-3' variant="primary" type='submit'>
+                Enviar
+              </Button>
             </Form>
           </Container>
         </Modal.Body>
         <Modal.Footer>
-        <Button className='mb-3, mt-3' variant="primary" type='submit'>
-                Enviar
-              </Button>
-          <Button className='mb.3, mt-3' variant="secondary" onClick={handleCloseForm}>
+          <Button className='mb-3, mt-3' variant="secondary" onClick={handleCloseForm}>
             Cerrar
           </Button>
         </Modal.Footer>

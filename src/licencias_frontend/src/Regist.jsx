@@ -6,7 +6,6 @@ export const RegistForm = () => {
     const [showRegister, setShowRegister] = useState(false);
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');
-    const [licenseNumber, setLicenseNumber] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -17,7 +16,6 @@ export const RegistForm = () => {
         const newUser = {
             name,
             surname,
-            licenseNumber,
             email,
             password,
             role: 'user'
@@ -86,12 +84,6 @@ export const RegistForm = () => {
                                     type='password'
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                />
-                                <FormLabel>Numero de licencia</FormLabel>
-                                <FormControl
-                                    placeholder='Ingresar numero de licencia'
-                                    value={licenseNumber}
-                                    onChange={(e) => setLicenseNumber(e.target.value)}
                                 />
                             </FormGroup>
                         </Form>
