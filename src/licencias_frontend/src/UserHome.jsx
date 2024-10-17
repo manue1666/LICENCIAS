@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Nav, Navbar, NavDropdown, Card, Tab, Tabs } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Log from '../src/Log.png';
+import Log from '../src/Log.png'; 
 import { FormTram } from './UserOptions';
 import { UserGestion } from './UserGest';
 
@@ -13,7 +13,7 @@ export default function UserHome() {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const { id } = JSON.parse(storedUser);
-      
+
       // Hacer una solicitud al backend para obtener los datos completos del usuario
       fetch(`http://bd3sg-teaaa-aaaaa-qaaba-cai.localhost:4943/user/${id}`)
         .then(response => {

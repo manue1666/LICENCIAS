@@ -63,7 +63,7 @@ export const FormTram = () => {
 
       // Enviar los datos de los documentos al backend
       fetch(`http://bd3sg-teaaa-aaaaa-qaaba-cai.localhost:4943/user/${id}/documents`, {
-        method: 'PUT',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },

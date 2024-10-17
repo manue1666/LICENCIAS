@@ -1,6 +1,6 @@
 import { Container, Nav, Navbar, Button, Card, Form, FormControl, FormLabel, FormGroup, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Log from '/root/licencias/src/licencias_frontend/src/Log.png';
+import Log from '/home/ramirez/LICENCIAS/src/licencias_frontend/src/Log.png';
 import { LoginForm } from './Login';
 import { RegistForm } from './Regist';
 
