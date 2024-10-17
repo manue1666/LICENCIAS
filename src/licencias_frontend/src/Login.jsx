@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import { Button, Card, Container, Modal, Form, FormGroup, FormLabel, FormControl, Navbar, Nav } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import {users} from "./App"
+import { Button, Card, Container, Modal, Form, FormGroup, FormLabel, FormControl } from 'react-bootstrap';
 
-
-export const LoginForm = ({}) => {
+export const LoginForm = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -12,23 +9,39 @@ export const LoginForm = ({}) => {
   const handleShowLogin = () => setShowLogin(true);
   const handleCloseLogin = () => setShowLogin(false);
 
-  const handleLogin = () => {
-    const user = users.find(u => u.email === email && u.password === password);
-    if (user) {
-      if (user.role === 'admin') {
-        window.location.href = '/AdminHome';
-      } else if (user.role === 'user') {
-        window.location.href = '/UserHome';
-      }
-    } else {
-      alert('Credenciales incorrectas');
+  const handleLogin = async () => {
+    try {
+        const response = await fetch('http://bd3sg-teaaa-aaaaa-qaaba-cai.localhost:4943/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Almacenar el ID y nombre del usuario en localStorage
+            localStorage.setItem('user', JSON.stringify({ id: data.id, name: data.name, role: data.role }));
+
+            // Redirigir según el rol del usuario
+            if (data.role === 'admin') {
+                window.location.href = '/AdminHome'; // Redirigir a AdminHome para administradores
+            } else if (data.role === 'user') {
+                window.location.href = '/UserHome';  // Redirigir a UserHome para usuarios normales
+            }
+        } else {
+            alert('Credenciales incorrectas');
+        }
+    } catch (error) {
+        console.error('Error al iniciar sesión:', error);
+        alert('Error en el servidor. Intenta nuevamente más tarde.');
     }
-  };
+};
 
   return (
     <>
-
-
       <Container className="mt-5">
         <Card style={{ width: '18rem' }}>
           <Card.Body>
