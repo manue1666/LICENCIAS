@@ -2,14 +2,18 @@ import { Server } from 'azle';
 import express from 'express';
 import cors from 'cors';
 
+// Importaciones para trabajar con Internet Identity (ICP)
+import { AuthClient } from '@dfinity/auth-client';
+
 let userIdCounter = 1;
 let users: Array<{
     id: number;
     name: string;
     surname: string;
-    email: string;
-    password: string;
+    email?: string;
+    password?: string;
     role: string;
+    internetIdentityPrincipal?: string; // Agregar campo para el principal de II
     documentData?: {
         identification: string;
         addressProof: string;
@@ -53,6 +57,7 @@ export default Server(() => {
         next();
     });
 
+    // Ruta para autenticación tradicional (registro)
     app.post('/register', (req, res) => {
         const { name, surname, email, password } = req.body;
         const newUser = {
@@ -67,6 +72,7 @@ export default Server(() => {
         res.status(201).send('Usuario registrado exitosamente.');
     });
 
+    // Ruta para autenticación tradicional (inicio de sesión)
     app.post('/login', (req, res) => {
         const { email, password } = req.body;
         const user = users.find(u => u.email === email && u.password === password);
@@ -76,6 +82,44 @@ export default Server(() => {
         res.json({ id: user.id, name: user.name, role: user.role });
     });
 
+    // Nueva ruta para autenticación con Internet Identity
+    app.post('/ii-login', async (req, res) => {
+        try {
+            const authClient = await AuthClient.create();
+            await authClient.login({
+                identityProvider: 'https://identity.ic0.app',
+                onSuccess: async () => {
+                    const identity = authClient.getIdentity();
+                    const principal = identity.getPrincipal().toText(); // Obtener el principal del usuario
+
+                    // Verificar si ya existe un usuario con este principal
+                    let user = users.find(u => u.internetIdentityPrincipal === principal);
+
+                    // Si no existe, crear un nuevo usuario
+                    if (!user) {
+                        user = {
+                            id: userIdCounter++,
+                            name: 'II User', // Podrías solicitar nombre en otra parte del flujo
+                            surname: 'II Surname',
+                            role: 'user',
+                            internetIdentityPrincipal: principal
+                        };
+                        users.push(user);
+                    }
+
+                    res.json({ id: user.id, name: user.name, role: user.role, principal });
+                },
+                onError: (err) => {
+                    res.status(500).send('Error en la autenticación con Internet Identity');
+                }
+            });
+        } catch (error) {
+            console.error('Error al iniciar sesión con Internet Identity:', error);
+            res.status(500).send('Error en la autenticación con Internet Identity');
+        }
+    });
+
+    // Obtener información de usuario
     app.get('/user/:id', (req, res) => {
         const userId = Number(req.params.id);
         const user = users.find(u => u.id === userId);
@@ -85,6 +129,7 @@ export default Server(() => {
         res.json(user);
     });
 
+    // Actualización de documentos
     app.post('/user/:id/documents', (req, res) => {
         const userId = Number(req.params.id);
         const { identification, addressProof, educationCertificate, practicalExamCertificate, curp } = req.body;
@@ -102,6 +147,7 @@ export default Server(() => {
         res.status(200).send('Documentos actualizados exitosamente.');
     });
 
+    // Generar licencia
     app.post('/user/:id/generate-license', (req, res) => {
         const userId = Number(req.params.id);
         const { licenseType } = req.body;
@@ -120,6 +166,7 @@ export default Server(() => {
         res.status(200).send('Licencia generada exitosamente.');
     });
 
+    // Obtener todos los usuarios
     app.get('/users', (req, res) => {
         const completeUsers = users.filter(user => user.documentData);
         res.json(completeUsers);

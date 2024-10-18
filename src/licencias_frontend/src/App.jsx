@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Log from '/home/ramirez/LICENCIAS/src/licencias_frontend/src/Log.png';
 import { LoginForm } from './Login';
 import { RegistForm } from './Regist';
+import { LoginII } from './LoginII';
 
 
 
@@ -41,6 +42,9 @@ export default function App() {
       </Container>
       <Container>
         <RegistForm/>
+      </Container>
+      <Container>
+        <LoginII/>
       </Container>
       
     </main>
