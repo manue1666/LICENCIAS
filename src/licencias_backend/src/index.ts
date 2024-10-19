@@ -1,7 +1,6 @@
 import { Server } from 'azle';
 import express from 'express';
 import cors from 'cors';
-
 // Importaciones para trabajar con Internet Identity (ICP)
 import { AuthClient } from '@dfinity/auth-client';
 
@@ -41,10 +40,8 @@ users.push(adminUser);
 
 export default Server(() => {
     const app = express();
-
     app.use(cors({ methods: ['GET', 'POST', 'PUT', 'DELETE'] }));
     app.options('*', cors());
-
     app.use(express.json());
 
     app.use((req, res, next) => {
@@ -82,42 +79,31 @@ export default Server(() => {
         res.json({ id: user.id, name: user.name, role: user.role });
     });
 
-    // Nueva ruta para autenticación con Internet Identity
-    app.post('/ii-login', async (req, res) => {
-        try {
-            const authClient = await AuthClient.create();
-            await authClient.login({
-                identityProvider: 'https://identity.ic0.app',
-                onSuccess: async () => {
-                    const identity = authClient.getIdentity();
-                    const principal = identity.getPrincipal().toText(); // Obtener el principal del usuario
+// Nueva ruta para autenticación con Internet Identity
+app.post('/ii-login', (req, res) => {
+    const { principal } = req.body;
 
-                    // Verificar si ya existe un usuario con este principal
-                    let user = users.find(u => u.internetIdentityPrincipal === principal);
+    if (!principal) {
+        return res.status(400).send('Principal not provided');
+    }
 
-                    // Si no existe, crear un nuevo usuario
-                    if (!user) {
-                        user = {
-                            id: userIdCounter++,
-                            name: 'II User', // Podrías solicitar nombre en otra parte del flujo
-                            surname: 'II Surname',
-                            role: 'user',
-                            internetIdentityPrincipal: principal
-                        };
-                        users.push(user);
-                    }
+    // Verificar si ya existe un usuario con este principal
+    let user = users.find(u => u.internetIdentityPrincipal === principal);
 
-                    res.json({ id: user.id, name: user.name, role: user.role, principal });
-                },
-                onError: (err) => {
-                    res.status(500).send('Error en la autenticación con Internet Identity');
-                }
-            });
-        } catch (error) {
-            console.error('Error al iniciar sesión con Internet Identity:', error);
-            res.status(500).send('Error en la autenticación con Internet Identity');
-        }
-    });
+    // Si no existe, crear un nuevo usuario
+    if (!user) {
+        user = {
+            id: userIdCounter++,
+            name: 'II User', // Podrías solicitar nombre en otra parte del flujo
+            surname: 'II Surname',
+            role: 'user',
+            internetIdentityPrincipal: principal
+        };
+        users.push(user);
+    }
+
+    res.json({ id: user.id, name: user.name, role: user.role, principal });
+});
 
     // Obtener información de usuario
     app.get('/user/:id', (req, res) => {

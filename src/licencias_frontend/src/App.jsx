@@ -54,7 +54,7 @@ export default function App() {
 
       {/* Iniciar sesión con Internet Identity */}
       <Container>
-        {/* <LoginII /> */}
+        <LoginII />
       </Container>
     </main>
   );
