@@ -1,8 +1,7 @@
 import React from 'react';
 import { Container, Nav, Navbar, Card } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Log from '/home/ramirez/LICENCIAS/src/licencias_frontend/src/Log.png';  // Asegúrate de que la ruta sea correcta
-import c5 from '/home/ramirez/LICENCIAS/src/licencias_frontend/src/c5.jpg';
+import Log from '../src/Log.png';
 import { LoginForm } from './Login';
 import { RegistForm } from './Regist';
 import { LoginII } from './LoginII';
@@ -52,7 +51,6 @@ export default function App() {
       <Container>
         <RegistForm />
       </Container>
-      <img width="30%" height="50%" src={c5} alt="c5"  style={{position:"absolute", left:"45%", marginTop:"-23%"}}/>
 
       {/* Iniciar sesión con Internet Identity */}
       <Container>
